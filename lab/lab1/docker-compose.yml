@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  adminer:
+    build: ./adminer
+    restart: always
+    ports:
+      - 8080:8080
+  gotrue:
+    build:
+      context: https://github.com/netlify/gotrue.git
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    env_file: ./.config/.env.gotrue
+    volumes:
+      - ./log-gotrue:/var/log/go/
+    ports:
+      - 8081:8081
+  db:
+    image: "mariadb:10.5"
+    restart: always
+    env_file: ./.config/.env.mariadb
+    ports:
+      - 3306:3306
+    volumes:
+      - ./db-data:/var/lib/mysql
+      - ./db-etc:/etc/mysql
